@@ -7,6 +7,7 @@ import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
 MODEL_ID = os.getenv("MODEL_ID", "mistralai/Mistral-7B-Instruct")
+HF_TOKEN = os.getenv("HF_TOKEN")
 
 app = FastAPI(title="KubeSling HF Mistral-7B Demo")
 
@@ -27,9 +28,14 @@ def load_model():
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
+    token_kwargs = {"token": HF_TOKEN} if HF_TOKEN else {}
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_ID, **token_kwargs)
     torch_dtype = torch.float16 if device == "cuda" else torch.float32
-    model = AutoModelForCausalLM.from_pretrained(MODEL_ID, torch_dtype=torch_dtype)
+    model = AutoModelForCausalLM.from_pretrained(
+        MODEL_ID,
+        torch_dtype=torch_dtype,
+        **token_kwargs,
+    )
     model.to(device)
     model.eval()
 
