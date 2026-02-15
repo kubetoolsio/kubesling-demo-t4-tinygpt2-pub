@@ -6,9 +6,9 @@ from pydantic import BaseModel
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
-MODEL_ID = os.getenv("MODEL_ID", "sshleifer/tiny-gpt2")
+MODEL_ID = os.getenv("MODEL_ID", "mistralai/Mistral-7B-Instruct")
 
-app = FastAPI(title="KubeSling HF Tiny GPT-2 Demo")
+app = FastAPI(title="KubeSling HF Mistral-7B Demo")
 
 class InferRequest(BaseModel):
     prompt: str
@@ -28,7 +28,8 @@ def load_model():
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
     tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
-    model = AutoModelForCausalLM.from_pretrained(MODEL_ID)
+    torch_dtype = torch.float16 if device == "cuda" else torch.float32
+    model = AutoModelForCausalLM.from_pretrained(MODEL_ID, torch_dtype=torch_dtype)
     model.to(device)
     model.eval()
 
