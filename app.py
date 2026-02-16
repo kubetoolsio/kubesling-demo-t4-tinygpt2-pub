@@ -6,7 +6,7 @@ from pydantic import BaseModel
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
-MODEL_ID = os.getenv("MODEL_ID", "mistralai/Mistral-7B-Instruct")
+MODEL_ID = os.getenv("MODEL_ID", "mistralai/Mistral-7B-Instruct-v0.3")
 HF_TOKEN = os.getenv("HF_TOKEN")
 
 app = FastAPI(title="KubeSling HF Mistral-7B Demo")
